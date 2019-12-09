@@ -1,0 +1,111 @@
+<!--*
+The MIT License
+
+Copyright (c) 2016-2019 kong <congcoi123@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>TenIO Client Javascript</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://rawgit.com/kawanet/msgpack-lite/master/dist/msgpack.min.js"></script>
+<script>
+  // Initialize websocket
+  var ws = new WebSocket("ws://localhost:8033");
+  
+  // Randomize user's name to log in
+  var u = Math.random().toString(36).substr(2, 5);
+  var s = "signature";
+
+  ws.onopen = e => {
+    // Start to send a log in request
+    console.log('Connection to server opened');
+    // Send request ...
+    login();
+  }
+
+  // The messages handler
+  ws.onmessage = e => {
+    // Convert blob data to buffer and decode by msgpack
+    var reader = new FileReader();
+    reader.readAsArrayBuffer(e.data);
+    reader.addEventListener("loadend", evt => {
+      // Create an arraybuffer object
+      buffer = new Uint8Array(evt.target.result);
+      var msg = msgpack.decode(buffer);
+
+      // Show the debugging
+      console.log("[RECV] " + JSON.stringify(msg));
+    });
+  }
+
+  ws.onclose = e => {
+    console.log("Connection closed");
+  }
+  
+  var disconnect = () => {
+    ws.close();
+  }
+
+  var login = () => {
+    var msg = {
+      "u": u,
+      "s": s
+    }
+    send(msg);
+  }
+
+  var send = json => {
+    // Guarantee the connection
+    if(ws.readyState === WebSocket.OPEN) {
+        var buffer = msgpack.encode(json);
+        console.log("[SENT] " + JSON.stringify(json));
+        ws.send(buffer);
+    }
+  }
+</script>
+</head>
+  <body lang="en">
+    <!--
+      <div class="vertical-center">
+        <div class="container">
+          <ul id="messages" class="list-unstyled">
+
+          </ul>
+          <hr />
+          <form role="form" id="chat_form" onsubmit="sendMessage(); return false;">
+              <div class="form-group">
+                <input class="form-control" type="text" name="message" id="message"
+                  placeholder="Type text to echo in here" value="" autofocus/>
+              </div>
+              <button type="button" id="send" class="btn btn-primary" onclick="login();">Login</button>
+        </form>
+      </div>
+    </div>
+    -->
+  </body>
+</html>
