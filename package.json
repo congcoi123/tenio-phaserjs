@@ -1,7 +1,7 @@
 {
-  "name": "basic-mmo-phaser",
+  "name": "tenio-phaserjs",
   "version": "1.0.0",
-  "description": " Very basic multiplayer online game example made with Phaser, Node.js and Socket.io ",
+  "description": "This is a client of TenIO project based on Phaserjs.",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,23 +9,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Jerenaux/basic-mmo-phaser.git"
+    "url": "git+https://github.com/congcoi123/tenio-phaserjs.git"
   },
   "keywords": [
     "Phaser",
     "Multiplayer",
     "game",
     "Node.js",
-    "socket.io"
+    "tenio"
   ],
-  "author": "Jerome Renaux",
+  "author": "Kong",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Jerenaux/basic-mmo-phaser/issues"
+    "url": "https://github.com/congcoi123/tenio-phaserjs/issues"
   },
-  "homepage": "https://github.com/Jerenaux/basic-mmo-phaser#readme",
+  "homepage": "https://github.com/congcoi123/tenio-phaserjs#readme",
   "dependencies": {
-    "express": "^4.15.2",
-    "socket.io": "^1.7.3"
+    "express": "^4.15.2"
   }
 }
