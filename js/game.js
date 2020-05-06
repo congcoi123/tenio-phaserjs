@@ -1,65 +1,94 @@
 /*
- * Author: Jerome Renaux
- * E-mail: jerome.renaux@gmail.com
- */
+The MIT License
+
+Copyright (c) 2016-2020 kong <congcoi123@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
 
 var Game = {};
 
-Game.init = function(){
+Game.init = () => {
     game.stage.disableVisibilityChange = true;
-};
+}
 
-Game.preload = function() {
+Game.preload = () => {
     game.load.tilemap('map', 'assets/map/example_map.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.spritesheet('tileset', 'assets/map/tilesheet.png',32,32);
+    game.load.spritesheet('tileset', 'assets/map/tilesheet.png', 32, 32);
     game.load.image('sprite','assets/sprites/sprite.png');
-};
+}
 
-Game.create = function(){
-    Game.playerMap = {};
+Game.create = () => {
+    Game.__players = {};
+    
     var map = game.add.tilemap('map');
-    map.addTilesetImage('tilesheet', 'tileset'); // tilesheet is the key of the tileset in map's JSON file
+    // tilesheet is the key of the tileset in map's JSON file
+    map.addTilesetImage('tilesheet', 'tileset');
+
     var layer;
     for(var i = 0; i < map.layers.length; i++) {
         layer = map.createLayer(i);
     }
-    layer.inputEnabled = true; // Allows clicking on the map ; it's enough to do it on the last layer
+    // Allows clicking on the map ; it's enough to do it on the last layer
+    layer.inputEnabled = true;
     layer.events.onInputUp.add(Game.getCoordinates, this);
-    Client.askNewPlayer();
-};
 
-Game.getCoordinates = function(layer,pointer){
-    Client.sendClick(pointer.worldX,pointer.worldY);
-};
+    Client.login();
+}
 
-Game.addNewPlayer = function(id,x,y){
-    if (!Game.keyExists(id, Game.playerMap)) {
-        Game.playerMap[id] = game.add.sprite(x,y,'sprite');
+Game.getCoordinates = (layer, pointer) => {
+    Client.sendCoordinates(pointer.worldX, pointer.worldY);
+}
+
+Game.addNewPlayer = (username, x, y) => {
+    if (!Game.__checkPlayerExists(username, Game.__players)) {
+        Game.__players[username] = game.add.sprite(x,y,'sprite');
     }    
-};
+}
 
-Game.movePlayer = function(id,x,y){
-    var player = Game.playerMap[id];
-    var distance = Phaser.Math.distance(player.x,player.y,x,y);
+Game.movePlayer = (username, x, y) => {
+    var player = Game.__players[username];
+    var distance = Phaser.Math.distance(player.x, player.y, x, y);
     var tween = game.add.tween(player);
-    var duration = distance*10;
-    tween.to({x:x,y:y}, duration);
+    var duration = distance * 10;
+
+    tween.to({
+        x: x,
+        y: y
+    }, duration);
+
     tween.start();
-};
+}
 
-Game.removePlayer = function(id){
-    Game.playerMap[id].destroy();
-    delete Game.playerMap[id];
-};
+Game.removePlayer = (username) => {
+    Game.__players[username].destroy();
+    delete Game.__players[username];
+}
 
-Game.keyExists = function(key, search) {
-        if (!search || (search.constructor !== Array && search.constructor !== Object)) {
-            return false;
+Game.__checkPlayerExists = (key, search) => {
+    if (!search || (search.constructor !== Array && search.constructor !== Object)) {
+        return false;
+    }
+    for (var i = 0; i < search.length; i++) {
+        if (search[i] === key) {
+            return true;
         }
-        for (var i = 0; i < search.length; i++) {
-            if (search[i] === key) {
-                return true;
-            }
-        }
-        return key in search;
-    };
+    }
+    return key in search;
+}

@@ -25,88 +25,80 @@ THE SOFTWARE.
 var Client = {};
 Client.socket = new WebSocket("ws://localhost:8033");
 
-Client.askNewPlayer = function(){
+Client.login = () => {
     // Randomize user's name to log in
     var u = Math.random().toString(36).substr(2, 5);
     var s = "signature";
 
-    Client.login(u, s);
-};
-
-Client.sendClick = function(x,y) {
-  var msg = {
-    "d": [
-        x,
-        y    
-    ]
-  }
-  Client.send(msg);
-};
-
-Client.send = json => {
-  // Guarantee the connection
-  if(Client.socket.readyState === WebSocket.OPEN) {
-      var buffer = msgpack.encode(json);
-      console.log("[SENT] " + JSON.stringify(json));
-      Client.socket.send(buffer);
-  }
+    var msg = {
+        "u": u,
+        "s": s
+    };
+    Client.__send(msg);
 }
 
-Client.login = (u, s) => {
-  var msg = {
-    "u": u,
-    "s": s
-  }
-  Client.send(msg);
+Client.sendCoordinates = (x, y) => {
+    var msg = {
+        "d": [x, y]
+    };
+    Client.__send(msg);
 }
 
-Client.addNewplayer = datas => {
-    for (var i = 0; i < datas.length; i++) {
-        Game.addNewPlayer(datas[i][0],datas[i][1],datas[i][2]);
+Client.__send = json => {
+    // Guarantee the connection
+    if (Client.socket.readyState === WebSocket.OPEN) {
+        var buffer = msgpack.encode(json);
+
+        console.log("[SENT] " + JSON.stringify(json));
+
+        Client.socket.send(buffer);
     }
 }
 
-Client.move = data => {
-    Game.movePlayer(data[0],data[1],data[2]);
+Client.__addNewplayers = datas => {
+    for (var i = 0; i < datas.length; i++) {
+        Game.addNewPlayer(datas[i][0], datas[i][1], datas[i][2]);
+    }
+}
+
+Client.__movePlayer = data => {
+    Game.movePlayer(data[0], data[1], data[2]);
 }
 
 Client.disconnect = () => {
-  Client.socket.close();
+    Client.socket.close();
 }
 
 Client.socket.onopen = e => {
-  // Start to send a log in request
-  console.log('Connection to server opened');
-  // Send request ...
-  // login();
+    console.log('[SYS] Connection to server opened');
 }
 
 Client.socket.onclose = e => {
-  console.log("Connection closed");
+    console.log("[SYS] Connection closed");
 }
 
 // The messages handler
 Client.socket.onmessage = e => {
-  // Convert blob data to buffer and decode by msgpack
-  var reader = new FileReader();
-  reader.readAsArrayBuffer(e.data);
-  reader.addEventListener("loadend", evt => {
-    // Create an arraybuffer object
-    buffer = new Uint8Array(evt.target.result);
-    var msg = msgpack.decode(buffer);
+    // Convert blob data to buffer and decode by msgpack
+    var reader = new FileReader();
+    reader.readAsArrayBuffer(e.data);
+    reader.addEventListener("loadend", evt => {
+        // Create an arraybuffer object
+        buffer = new Uint8Array(evt.target.result);
+        var msg = msgpack.decode(buffer);
 
-    // Show the debugging
-    console.log("[RECV] " + JSON.stringify(msg));
+        // Show the debugging
+        console.log("[RECV] " + JSON.stringify(msg));
 
-    switch (msg["c"]) {
-        case "i":
-            Client.addNewplayer(msg["d"]);
-            break;
+        switch (msg["c"]) {
+            case "i":
+                Client.__addNewplayers(msg["d"]);
+                break;
 
-        case "m":
-            Client.move(msg["d"]);
-            break;
-    }
+            case "m":
+                Client.__movePlayer(msg["d"]);
+                break;
+        }
 
-  });
+    });
 }
