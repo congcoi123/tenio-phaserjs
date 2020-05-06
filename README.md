@@ -1,7 +1,7 @@
 # TenIO JavaScript
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![GitHub last commit](https://img.shields.io/github/last-commit/congcoi123/tenio-phaserjs)](#)
-[![GitHub issues](https://img.shields.io/github/issues/congcoi123/tenio)](https://github.com/congcoi123/tenio-phaserjs/issues)
+[![GitHub issues](https://img.shields.io/github/issues/congcoi123/tenio-phaserjs)](https://github.com/congcoi123/tenio-phaserjs/issues)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 This is a client of [TenIO](https://github.com/congcoi123/tenio) project base on Phaserjs.
