@@ -2,11 +2,6 @@
 var Client = {};
 Client.socket = new WebSocket("ws://localhost:8033");
 
-Client.sendTest = function(){
-    console.log("test sent");
-    Client.socket.emit('test');
-};
-
 Client.askNewPlayer = function(){
     // Randomize user's name to log in
     var u = Math.random().toString(36).substr(2, 5);
@@ -16,7 +11,13 @@ Client.askNewPlayer = function(){
 };
 
 Client.sendClick = function(x,y) {
-  Client.socket.emit('click',{x:x,y:y});
+  var msg = {
+    "d": [
+        x,
+        y    
+    ]
+  }
+  Client.send(msg);
 };
 
 Client.send = json => {
@@ -34,6 +35,16 @@ Client.login = (u, s) => {
     "s": s
   }
   Client.send(msg);
+}
+
+Client.addNewplayer = datas => {
+    for (var i = 0; i < datas.length; i++) {
+        Game.addNewPlayer(datas[i][0],datas[i][1],datas[i][2]);
+    }
+}
+
+Client.move = data => {
+    Game.movePlayer(data[0],data[1],data[2]);
 }
 
 Client.disconnect = () => {
@@ -63,12 +74,19 @@ Client.socket.onmessage = e => {
 
     // Show the debugging
     console.log("[RECV] " + JSON.stringify(msg));
+
+    switch (msg["c"]) {
+        case "i":
+            Client.addNewplayer(msg["d"]);
+            break;
+
+        case "m":
+            Client.move(msg["d"]);
+            break;
+    }
+
   });
 }
-
-// Client.socket.on('newplayer',function(data){
-//     Game.addNewPlayer(data.id,data.x,data.y);
-// });
 
 // Client.socket.on('allplayers',function(data){
 //     for(var i = 0; i < data.length; i++){
