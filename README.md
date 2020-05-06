@@ -1,4 +1,4 @@
-# TenIO JavaScript
+# TenIO Phaserjs
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![GitHub last commit](https://img.shields.io/github/last-commit/congcoi123/tenio-phaserjs)](#)
 [![GitHub issues](https://img.shields.io/github/issues/congcoi123/tenio-phaserjs)](https://github.com/congcoi123/tenio-phaserjs/issues)
