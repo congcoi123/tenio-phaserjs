@@ -1,3 +1,4 @@
+/*
 The MIT License
 
 Copyright (c) 2016-2020 kong <congcoi123@gmail.com>
@@ -19,3 +20,20 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+*/
+
+var express = require('express');
+var app = express();
+var server = require('http').Server(app);
+
+app.use('/css',express.static(__dirname + '/css'));
+app.use('/js',express.static(__dirname + '/js'));
+app.use('/assets',express.static(__dirname + '/assets'));
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname+'/index.html');
+})
+
+server.listen(9999, () => {
+    console.log('Listening on ' + server.address().port);
+});
