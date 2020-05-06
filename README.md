@@ -27,16 +27,24 @@ This project is currently available under the [MIT](LICENSE) License.
 
 ## Installation
 You can get the sources:
+```sh
+$ git clone https://github.com/congcoi123/tenio-phaserjs.git
 ```
-git clone https://github.com/congcoi123/tenio-phaserjs.git
-```
+
+## Contributing
+Please check out the [contributing guideline](CONTRIBUTING.md) for more details.
 
 ## Running the game
 For the client, Phaser is included in the code (`js/vendor/phaser.min.js`). You will need [npm](https://www.npmjs.com/) to install the Node.js packages required for the server. To run the server, you'll need to have Node.js installed.
 
-Clone the repository. Inside the newly created directory, run `npm install` to install the Node.js packages listed in `package.json`. Then run `node server.js` to start the server. The server will listen to connections on port `9999`.
-You can change that behaviour by editing the code.
-You can access the app by navigating to `http://localhost:9999`.
+Clone the repository. Inside the newly created directory, run `npm install` to install the Node.js packages listed in `package.json`. Then run `node server.js` to start the server. The server will listen to connections on port `9999`. You can change that behaviour by editing the code. After that, you can access the app by navigating to `http://localhost:9999`.
+
+In the nutshell:
+```sh
+$ cd tenio-phaserjs
+$ npm install
+$ node server.js
+```
 
 ## Other clients
 - [TenIO Cocos2dx](https://github.com/congcoi123/tenio-cocos2dx.git)
